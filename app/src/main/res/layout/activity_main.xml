@@ -17,23 +17,49 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
         android:id="@+id/minuteView"
-        android:layout_marginTop="139dp"
-        android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/button"
-        android:layout_toStartOf="@+id/button" />
+        android:layout_below="@+id/countdownView"
+        android:layout_alignLeft="@+id/countdownView"
+        android:layout_alignStart="@+id/countdownView" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Text"
         android:id="@+id/secondView"
         android:layout_gravity="center"
         android:layout_alignTop="@+id/minuteView"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="49dp"
-        android:layout_marginEnd="49dp" />
+        android:layout_alignRight="@+id/countdownView"
+        android:layout_alignEnd="@+id/countdownView" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:id="@+id/countdownView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Phone Number"
+        android:id="@+id/phoneNumber"
+        android:layout_marginTop="71dp"
+        android:layout_below="@+id/minuteView"
+        android:layout_alignLeft="@+id/button"
+        android:layout_alignStart="@+id/button"
+
+        android:focusableInTouchMode="false"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Message"
+        android:id="@+id/message"
+        android:layout_below="@+id/phoneNumber"
+        android:layout_centerHorizontal="true"
+        android:focusableInTouchMode="false"/>/>
 
 </RelativeLayout>
