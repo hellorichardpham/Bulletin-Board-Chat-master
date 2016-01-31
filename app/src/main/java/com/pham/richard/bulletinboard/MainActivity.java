@@ -44,7 +44,7 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
+//
 
 public class MainActivity extends ActionBarActivity {
 
@@ -60,6 +60,7 @@ public class MainActivity extends ActionBarActivity {
     boolean countdownHasStarted = false;
     double longitude;
     double latitude;
+    boolean iClicked = false;
 
     /*** Called when the activity is first created.*/
     @Override
@@ -70,9 +71,8 @@ public class MainActivity extends ActionBarActivity {
         mButton = (Button) findViewById(R.id.button);
         mEdit = (EditText) findViewById(R.id.minuteView);
         sEdit = (EditText) findViewById(R.id.secondView);
-        txtphoneNo = (EditText) findViewById(R.id.phoneNumber);
-        txtMessage = (EditText) findViewById(R.id.message);
-
+        txtphoneNo = (EditText) findViewById(R.id.phoneNumberInput);
+        txtMessage = (EditText) findViewById(R.id.messageInput);
 
         final LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
@@ -93,7 +93,6 @@ public class MainActivity extends ActionBarActivity {
             }
 
         };
-
 
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -140,52 +139,31 @@ public class MainActivity extends ActionBarActivity {
                                     totalTime = 0;
                                     sendSMSMessage();
                                     countdownHasStarted = false;
-
-
                                 }
-
-
                             }
-
                                     .start();
                         }
-
                     }
-
 
                     //SEND SMS MESSAGE
                     protected void sendSMSMessage() {
 
                         Log.i("Send SMS", "");
-                        String phoneNo = txtphoneNo.getText().toString();
+                        String phoneNoInput = txtphoneNo.getText().toString();
                         String  mapLink = "https://www.google.com/maps/?q=" + latitude + "," + longitude;
-                        String message = txtMessage.getText().toString() + "\n Here's my last location: " + mapLink;
+                        String messageInput = txtMessage.getText().toString() + "\n Here's my last location: " + mapLink;
 
 
                         try {
                             SmsManager smsManager = SmsManager.getDefault();
-                            smsManager.sendTextMessage(phoneNo, null, message, null, null);
+                            smsManager.sendTextMessage(phoneNoInput, null, messageInput, null, null);
                             Toast.makeText(getApplicationContext(), "SMS sent.", Toast.LENGTH_LONG).show();
                         } catch (Exception e) {
                             Toast.makeText(getApplicationContext(), "SMS faild, please try again.", Toast.LENGTH_LONG).show();
                             e.printStackTrace();
                         }
                     }
-
-
                 });
-
-        //BLANK SPACE WHEN TEXT IS CLICKED
-        txtphoneNo.setOnClickListener(
-                new View.OnClickListener() {
-                    public void onClick(View view) {
-
-
-                    }
-                    void deleteText() {
-                        txtphoneNo.setText("");
-                    }
-        });
     }
 
 

@@ -9,7 +9,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
+        android:text="Start Timer"
         android:id="@+id/button"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
@@ -18,47 +18,81 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/minuteView"
+        android:layout_marginTop="62dp"
+        android:text="Minutes"
         android:layout_below="@+id/countdownView"
-        android:layout_alignLeft="@+id/countdownView"
-        android:layout_alignStart="@+id/countdownView" />
+        android:layout_alignRight="@+id/message"
+        android:layout_alignEnd="@+id/message"
+        android:layout_marginRight="65dp"
+        android:layout_marginEnd="65dp" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/secondView"
         android:layout_gravity="center"
+        android:text="Seconds"
         android:layout_alignTop="@+id/minuteView"
-        android:layout_alignRight="@+id/countdownView"
-        android:layout_alignEnd="@+id/countdownView" />
+        android:layout_toRightOf="@+id/minuteView"
+        android:layout_toEndOf="@+id/minuteView" />
 
-    <TextView
+    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="00:00"
         android:id="@+id/countdownView"
+        android:textSize="50dp"
+        android:textAlignment="center"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:gravity="center"/>
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Phone Number"
         android:id="@+id/phoneNumber"
         android:layout_marginTop="71dp"
-        android:layout_below="@+id/minuteView"
-        android:layout_alignLeft="@+id/button"
-        android:layout_alignStart="@+id/button"
-        android:focusableInTouchMode="false"/>
+        android:focusableInTouchMode="false"
 
-    <EditText
+        android:layout_below="@+id/minuteView"
+        android:layout_alignRight="@+id/message"
+        android:layout_alignEnd="@+id/message" />
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Message"
         android:id="@+id/message"
+        android:focusableInTouchMode="false"
         android:layout_below="@+id/phoneNumber"
-        android:layout_centerHorizontal="true"
-        android:focusableInTouchMode="false"/>/>
+        android:layout_alignRight="@+id/button"
+        android:layout_alignEnd="@+id/button"
+        android:layout_marginRight="69dp"
+        android:layout_marginEnd="69dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/phoneNumberInput"
+        android:focusableInTouchMode="true"
+        android:layout_alignBottom="@+id/phoneNumber"
+        android:layout_alignLeft="@+id/secondView"
+        android:layout_alignStart="@+id/secondView"
+        android:layout_marginLeft="32dp"
+        android:layout_marginStart="32dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/messageInput"
+        android:focusableInTouchMode="true"
+        android:layout_alignBottom="@+id/message"
+        android:layout_alignLeft="@+id/phoneNumberInput"
+        android:layout_alignStart="@+id/phoneNumberInput" />
 
 </RelativeLayout>
