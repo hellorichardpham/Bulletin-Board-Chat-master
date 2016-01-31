@@ -1,4 +1,4 @@
-package com.pham.richard.bulletinboard;
+package com.holy.trinity.gotchoback;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;

@@ -4,7 +4,7 @@ android {
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
     defaultConfig {
-        applicationId 'com.pham.richard.bulletinboard'
+        applicationId 'com.holy.trinity.gotchoback'
         minSdkVersion 15
         targetSdkVersion 21
         versionCode 1

@@ -1,55 +1,31 @@
-package com.pham.richard.bulletinboard;
+package com.holy.trinity.gotchoback;
 
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.os.CountDownTimer;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.location.LocationListener;
-import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.concurrent.TimeUnit;
 import android.telephony.SmsManager;
-import android.location.LocationManager;
-import android.location.LocationListener;
-
-import java.util.UUID;
-
-
-import com.pham.richard.bulletinboard.R;
-import com.google.gson.Gson;
-
-import org.w3c.dom.Text;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 //
 
 public class MainActivity extends ActionBarActivity {
@@ -74,6 +50,7 @@ public class MainActivity extends ActionBarActivity {
     final int DISMISS = 0;
     AlertDialog dialog;
     final int TIMEOUT = 5000;
+    String phoneNoInput;
 
 
 
@@ -92,14 +69,15 @@ public class MainActivity extends ActionBarActivity {
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensorListener = new ShakeEventListener();
 
-        mSensorListener.setOnShakeListener(new ShakeEventListener.OnShakeListener() {
-
-            public void onShake() {
-                if (countdownHasStarted == true) {
-                    Toast.makeText(MainActivity.this, "Shake!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+//        mSensorListener.setOnShakeListener(new ShakeEventListener.OnShakeListener() {
+//
+//            public void onShake() {
+//                if (countdownHasStarted == true) {
+//                    Toast.makeText(MainActivity.this, "Shake!", Toast.LENGTH_SHORT).show();
+//                    call();
+//                }
+//            }
+//        });
 
 
         final LocationListener locationListener = new LocationListener() {
@@ -121,6 +99,7 @@ public class MainActivity extends ActionBarActivity {
             }
 
         };
+
 
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -155,6 +134,8 @@ public class MainActivity extends ActionBarActivity {
                         if (countdownHasStarted == false) {
                             countdownHasStarted = true;
 
+                            phoneNoInput = txtphoneNo.getText().toString();
+
                             new CountDownTimer(totalTime, 1000) {
                                 public void onTick(long millisUntilFinished) {
 
@@ -167,8 +148,12 @@ public class MainActivity extends ActionBarActivity {
                                                     TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
                                 }
 
+
                                 //GET LOCATION OF PHONE
                                 Location lastLocation;
+
+                                //get #
+
 
                                 public void onFinish() {
                                     cEdit.setText("done!");
@@ -180,6 +165,8 @@ public class MainActivity extends ActionBarActivity {
                             }
                                     .start();
                         }
+
+
                     }
 
                     private Handler mHandler = new Handler() {
@@ -197,6 +184,7 @@ public class MainActivity extends ActionBarActivity {
                             }
                         }
                     };
+
 
                     private void generateDialog() {
                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -219,13 +207,12 @@ public class MainActivity extends ActionBarActivity {
                     }
 
 
-
                     //SEND SMS MESSAGE
                     protected void sendSMSMessage() {
 
                         Log.i("Send SMS", "");
-                        String phoneNoInput = txtphoneNo.getText().toString();
-                        String  mapLink = "https://www.google.com/maps/?q=" + latitude + "," + longitude;
+                        // String phoneNoInput = txtphoneNo.getText().toString();
+                        String mapLink = "https://www.google.com/maps/?q=" + latitude + "," + longitude;
                         String messageInput = txtMessage.getText().toString() + "\n Here's my last location: " + mapLink;
 
 
@@ -239,6 +226,29 @@ public class MainActivity extends ActionBarActivity {
                         }
                     }
                 });
+
+
+
+
+        mSensorListener.setOnShakeListener(new ShakeEventListener.OnShakeListener() {
+            private void call() {
+                try {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + phoneNoInput));
+                    startActivity(callIntent);
+                } catch (ActivityNotFoundException e) {
+                    Log.e("helloandroid", "Call failed", e);
+                }
+            }
+            public void onShake() {
+
+                if (countdownHasStarted == true) {
+
+                    Toast.makeText(MainActivity.this, "Shake!", Toast.LENGTH_SHORT).show();
+                    call();
+                }
+            }
+        });
     }
 
 

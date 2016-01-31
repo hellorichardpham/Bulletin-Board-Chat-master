@@ -1,4 +1,4 @@
-package com.pham.richard.bulletinboard;
+package com.holy.trinity.gotchoback;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
