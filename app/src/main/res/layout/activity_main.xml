@@ -49,7 +49,6 @@
         android:layout_below="@+id/minuteView"
         android:layout_alignLeft="@+id/button"
         android:layout_alignStart="@+id/button"
-
         android:focusableInTouchMode="false"/>
 
     <EditText
