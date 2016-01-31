@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -26,12 +27,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import java.util.concurrent.TimeUnit;
 import android.telephony.SmsManager;
+import android.os.Message;
 //
 
 public class MainActivity extends ActionBarActivity {
 
     Button mButton;
     EditText mEdit;
+    TextView pEdit;
     EditText sEdit;
     TextView cEdit;
     int totalTime = 0;
@@ -48,11 +51,14 @@ public class MainActivity extends ActionBarActivity {
     //no response
     CountDownTimer counter;
     final int DISMISS = 0;
-    AlertDialog dialog;
+    final int DANGER = 1;
+    AlertDialog dialog, dialog2;
     final int TIMEOUT = 5000;
     String phoneNoInput;
-
-
+    boolean isPaused, isCanceled;
+    MediaPlayer sound;
+    Button sButton;
+    int remainingTime;
 
     /*** Called when the activity is first created.*/
     @Override
@@ -60,11 +66,14 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        sButton = (Button) findViewById(R.id.safe);
         mButton = (Button) findViewById(R.id.button);
         mEdit = (EditText) findViewById(R.id.minuteView);
         sEdit = (EditText) findViewById(R.id.secondView);
         txtphoneNo = (EditText) findViewById(R.id.phoneNumberInput);
         txtMessage = (EditText) findViewById(R.id.messageInput);
+        sound = MediaPlayer.create(this, R.raw.alarm);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensorListener = new ShakeEventListener();
@@ -114,16 +123,18 @@ public class MainActivity extends ActionBarActivity {
                 new View.OnClickListener() {
                     public void onClick(View view) {
                         Log.v("TIME??", mEdit.getText().toString());
-                        if (!TextUtils.isEmpty(mEdit.getText())) {
-                            totalTime += Integer.parseInt(mEdit.getText().toString()) * 60000;
-                        } else {
-                            totalTime += 0;
-                        }
+                        if (!isPaused) {
+                            if (!TextUtils.isEmpty(mEdit.getText())) {
+                                totalTime += Integer.parseInt(mEdit.getText().toString()) * 60000;
+                            } else {
+                                totalTime += 0;
+                            }
 //convert the second field into milliseconds
-                        if (!TextUtils.isEmpty(sEdit.getText())) {
-                            totalTime += Integer.parseInt(sEdit.getText().toString()) * 1000;
-                        } else {
-                            totalTime += 0;
+                            if (!TextUtils.isEmpty(sEdit.getText())) {
+                                totalTime += Integer.parseInt(sEdit.getText().toString()) * 1000;
+                            } else {
+                                totalTime += 0;
+                            }
                         }
 
                         System.out.println("totalTime: " + totalTime);
@@ -131,71 +142,92 @@ public class MainActivity extends ActionBarActivity {
                         cEdit = (TextView) findViewById(R.id.countdownView);
 
                         //COINTDOWN TIMER
-                        if (countdownHasStarted == false) {
+                        if (!countdownHasStarted || isPaused || isCanceled) {
                             countdownHasStarted = true;
+                            //isPaused = false;
+                            isCanceled = false;
 
                             phoneNoInput = txtphoneNo.getText().toString();
 
-                            new CountDownTimer(totalTime, 1000) {
+                            //COINTDOWN TIMER
+                            counter = new CountDownTimer(totalTime, 1000) {
                                 public void onTick(long millisUntilFinished) {
+                                    if (isPaused || isCanceled) {
+                                        totalTime = (int) millisUntilFinished;
+                                        countdownHasStarted = false;
+                                        //pEdit = (TextView) findViewById(R.id.countdownView);
+                                        cancel();
+                                    }
+//                                    countdownHasStarted = true;
+//                                    //Convert to minutes and seconds
+                               cEdit.setText("" + String.format(FORMAT,
+                                      TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
+                                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(
+                                         TimeUnit.MILLISECONDS.toHours(millisUntilFinished)),
+                                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(
+                                                  TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
+                                    //totalTime = (int) millisUntilFinished;
+                                    //System.out.println(totalTime);
 
-                                    //Convert to minutes and seconds
-                                    cEdit.setText("" + String.format(FORMAT,
-                                            TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
-                                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(
-                                                    TimeUnit.MILLISECONDS.toHours(millisUntilFinished)),
-                                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(
-                                                    TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
-                                }
+                             }
 
 
                                 //GET LOCATION OF PHONE
                                 Location lastLocation;
 
-                                //get #
-
-
                                 public void onFinish() {
+
                                     cEdit.setText("done!");
                                     totalTime = 0;
-                                    sendSMSMessage();
                                     countdownHasStarted = false;
+                                    System.out.println("Generating first dialog");
                                     generateDialog();
                                 }
-                            }
-                                    .start();
+
+                            }.start();
+
                         }
 
 
                     }
 
                     private Handler mHandler = new Handler() {
-                        public void handleMessage(android.os.Message msg) {
-                            System.out.println("Handle Message");
+                        public void handleMessage(Message msg) {
+                            System.out.println("Handle Message: CASE: " + msg.what);
                             switch (msg.what) {
                                 case DISMISS:
                                     if (dialog != null && dialog.isShowing()) {
+                                        System.out.println("I hit the dismiss case");
                                         dialog.dismiss();
+                                        //Play Music
+                                        sound.start();
+                                        generateSecondDialog();
+                                        //dialog.dismiss();
                                     }
                                     break;
-
+                                case DANGER:
+                                    if (dialog2 != null && dialog2.isShowing()) {
+                                        System.out.println("I hit the danger case");
+                                        //Send out text to loved one.
+                                        sendSMSMessage();
+                                        dialog2.dismiss();
+                                    }
                                 default:
                                     break;
                             }
                         }
                     };
 
-
                     private void generateDialog() {
                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                        System.out.println("Created Builder");
-                        builder.setMessage("The time allotted has run out and you haven't confirmed if you've reached your destination. Are you home yet?").setCancelable(false).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        builder.setMessage("The time allotted has run out and you haven't confirmed if you've reached your destination. Are you home yet?")
+                                .setCancelable(false).setPositiveButton("I'm home", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 System.out.println(" onclick Builder");
+                                //Finish closes the app
                                 finish();
-                                //I want to return to a default state. Yes I made it home.
                             }
-                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        }).setNegativeButton("I need more time", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
 
                             }
@@ -203,7 +235,24 @@ public class MainActivity extends ActionBarActivity {
                         dialog = builder.create();
                         dialog.show();
                         mHandler.sendEmptyMessageDelayed(DISMISS, TIMEOUT);
-                        System.out.println("Send message");
+                    }
+
+                    private void generateSecondDialog() {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setMessage("Please respond in the next 5 seconds or your text message and last location will be sent to your emergency contact.")
+                                .setCancelable(false).setPositiveButton("I'm home", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                finish();
+                                //I want to return to a default state. Yes I made it home.
+                            }
+                        }).setNegativeButton("I need more time", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog2, int id) {
+
+                            }
+                        });
+                        dialog2 = builder.create();
+                        dialog2.show();
+                        mHandler.sendEmptyMessageDelayed(DANGER, TIMEOUT);
                     }
 
 
@@ -227,70 +276,79 @@ public class MainActivity extends ActionBarActivity {
                     }
                 });
 
+        sButton.setOnClickListener(
+                new View.OnClickListener() {
+                    public void onClick(View view) {
+                        Toast.makeText(getApplicationContext(), "I'm glad you're safe! :)", Toast.LENGTH_LONG).show();
+                        System.exit(0);
+
+                        //totalTime = 0;
+
+                    }
+                });
+                        mSensorListener.setOnShakeListener(new ShakeEventListener.OnShakeListener() {
+                            private void call() {
+                                try {
+                                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                                    callIntent.setData(Uri.parse("tel:" + phoneNoInput));
+                                    startActivity(callIntent);
+                                } catch (ActivityNotFoundException e) {
+                                    Log.e("helloandroid", "Call failed", e);
+                                }
+                            }
+
+                            public void onShake() {
+
+                                if (countdownHasStarted) {
+                                    countdownHasStarted = false;
+                                    isPaused = true;
+                                    counter.cancel();
+
+                                    Toast.makeText(MainActivity.this, "Shake!", Toast.LENGTH_SHORT).show();
+                                    call();
+
+                                }
+                            }
+                        });
+                    }
 
 
+                    @Override
+                    protected void onStart() {
+                        super.onStart();
+                    }
 
-        mSensorListener.setOnShakeListener(new ShakeEventListener.OnShakeListener() {
-            private void call() {
-                try {
-                    Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + phoneNoInput));
-                    startActivity(callIntent);
-                } catch (ActivityNotFoundException e) {
-                    Log.e("helloandroid", "Call failed", e);
+
+                    @Override
+                    protected void onResume() {
+                        super.onResume();
+                        // First super, then do stuff.
+                        // Let us display the previous posts, if any.
+                        //SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+                        mSensorManager.registerListener(mSensorListener,
+                                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                                SensorManager.SENSOR_DELAY_UI);
+
+                    }
+
+
+                    @Override
+                    protected void onPause() {
+                        mSensorManager.unregisterListener(mSensorListener);
+                        super.onPause();
+                    }
+
+
+                    @Override
+                    public boolean onCreateOptionsMenu(Menu menu) {
+                        // Inflate the menu; this adds items to the action bar if it is present.
+                        //getMenuInflater().inflate(R.menu.menu_main, menu);
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onOptionsItemSelected(MenuItem item) {
+                        return super.onOptionsItemSelected(item);
+                    }
+
                 }
-            }
-            public void onShake() {
-
-                if (countdownHasStarted == true) {
-
-                    Toast.makeText(MainActivity.this, "Shake!", Toast.LENGTH_SHORT).show();
-                    call();
-                }
-            }
-        });
-    }
-
-
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        // First super, then do stuff.
-        // Let us display the previous posts, if any.
-        //SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
-        mSensorManager.registerListener(mSensorListener,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-                SensorManager.SENSOR_DELAY_UI);
-
-    }
-
-
-    @Override
-    protected void onPause() {
-        mSensorManager.unregisterListener(mSensorListener);
-        super.onPause();
-    }
-
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-}

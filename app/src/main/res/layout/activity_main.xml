@@ -65,10 +65,9 @@
         android:id="@+id/message"
         android:focusableInTouchMode="false"
         android:layout_below="@+id/phoneNumber"
-        android:layout_alignRight="@+id/button"
-        android:layout_alignEnd="@+id/button"
-        android:layout_marginRight="69dp"
-        android:layout_marginEnd="69dp" />
+        android:layout_toLeftOf="@+id/minuteView"
+        android:layout_toStartOf="@+id/minuteView"
+        android:layout_marginTop="27dp" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -76,10 +75,10 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/phoneNumberInput"
         android:focusableInTouchMode="true"
-        android:layout_above="@+id/message"
-        android:layout_toRightOf="@+id/message"
-        android:layout_toEndOf="@+id/message"
-        android:inputType="number"/>
+        android:inputType="number"
+        android:layout_alignBottom="@+id/phoneNumber"
+        android:layout_toRightOf="@+id/textView2"
+        android:layout_toEndOf="@+id/textView2" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -88,8 +87,8 @@
         android:id="@+id/messageInput"
         android:focusableInTouchMode="true"
         android:layout_alignBottom="@+id/message"
-        android:layout_alignLeft="@+id/phoneNumberInput"
-        android:layout_alignStart="@+id/phoneNumberInput" />
+        android:layout_toRightOf="@+id/textView2"
+        android:layout_toEndOf="@+id/textView2" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -112,5 +111,15 @@
         android:layout_alignTop="@+id/minuteView"
         android:layout_toRightOf="@+id/minuteView"
         android:layout_toEndOf="@+id/minuteView" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="I&apos;m safe!"
+        android:id="@+id/safe"
+        android:layout_marginBottom="27dp"
+        android:layout_gravity="center"
+        android:layout_above="@+id/button"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
