@@ -1,7 +1,10 @@
 package com.pham.richard.bulletinboard;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
@@ -63,8 +66,15 @@ public class MainActivity extends ActionBarActivity {
     boolean countdownHasStarted = false;
     double longitude;
     double latitude;
+    //shaker
     private SensorManager mSensorManager;
     private ShakeEventListener mSensorListener;
+    //no response
+    CountDownTimer counter;
+    final int DISMISS = 0;
+    AlertDialog dialog;
+    final int TIMEOUT = 5000;
+
 
 
     /*** Called when the activity is first created.*/
@@ -165,11 +175,50 @@ public class MainActivity extends ActionBarActivity {
                                     totalTime = 0;
                                     sendSMSMessage();
                                     countdownHasStarted = false;
+                                    generateDialog();
                                 }
                             }
                                     .start();
                         }
                     }
+
+                    private Handler mHandler = new Handler() {
+                        public void handleMessage(android.os.Message msg) {
+                            System.out.println("Handle Message");
+                            switch (msg.what) {
+                                case DISMISS:
+                                    if (dialog != null && dialog.isShowing()) {
+                                        dialog.dismiss();
+                                    }
+                                    break;
+
+                                default:
+                                    break;
+                            }
+                        }
+                    };
+
+                    private void generateDialog() {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        System.out.println("Created Builder");
+                        builder.setMessage("The time allotted has run out and you haven't confirmed if you've reached your destination. Are you home yet?").setCancelable(false).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                System.out.println(" onclick Builder");
+                                finish();
+                                //I want to return to a default state. Yes I made it home.
+                            }
+                        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                            }
+                        });
+                        dialog = builder.create();
+                        dialog.show();
+                        mHandler.sendEmptyMessageDelayed(DISMISS, TIMEOUT);
+                        System.out.println("Send message");
+                    }
+
+
 
                     //SEND SMS MESSAGE
                     protected void sendSMSMessage() {
