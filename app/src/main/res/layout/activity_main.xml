@@ -18,25 +18,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/minuteView"
-        android:layout_marginTop="62dp"
-        android:text="Minutes"
+        android:layout_marginTop="58dp"
         android:layout_below="@+id/countdownView"
-        android:layout_alignRight="@+id/message"
-        android:layout_alignEnd="@+id/message"
-        android:layout_marginRight="65dp"
-        android:layout_marginEnd="65dp" />
+        android:layout_centerHorizontal="true" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/secondView"
         android:layout_gravity="center"
-        android:text="Seconds"
-        android:layout_alignTop="@+id/minuteView"
-        android:layout_toRightOf="@+id/minuteView"
-        android:layout_toEndOf="@+id/minuteView" />
+        android:layout_alignTop="@+id/textView2"
+        android:layout_toRightOf="@+id/textView2"
+        android:layout_toEndOf="@+id/textView2" />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="00:00"
@@ -79,11 +74,9 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:id="@+id/phoneNumberInput"
         android:focusableInTouchMode="true"
-        android:layout_alignBottom="@+id/phoneNumber"
-        android:layout_alignLeft="@+id/secondView"
-        android:layout_alignStart="@+id/secondView"
-        android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp" />
+        android:layout_above="@+id/message"
+        android:layout_toRightOf="@+id/message"
+        android:layout_toEndOf="@+id/message" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -94,5 +87,27 @@
         android:layout_alignBottom="@+id/message"
         android:layout_alignLeft="@+id/phoneNumberInput"
         android:layout_alignStart="@+id/phoneNumberInput" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Time"
+        android:id="@+id/textView"
+        android:focusableInTouchMode="false"
+        android:layout_below="@+id/textView2"
+        android:layout_alignLeft="@+id/message"
+        android:layout_alignStart="@+id/message" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text=":"
+        android:id="@+id/textView2"
+        android:focusableInTouchMode="false"
+        android:layout_alignTop="@+id/minuteView"
+        android:layout_toRightOf="@+id/minuteView"
+        android:layout_toEndOf="@+id/minuteView" />
 
 </RelativeLayout>

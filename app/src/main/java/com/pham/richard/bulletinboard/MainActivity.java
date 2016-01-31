@@ -1,5 +1,6 @@
 package com.pham.richard.bulletinboard;
 
+import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.os.CountDownTimer;
@@ -107,10 +108,18 @@ public class MainActivity extends ActionBarActivity {
                 new View.OnClickListener() {
                     public void onClick(View view) {
                         Log.v("TIME??", mEdit.getText().toString());
-                        //convert the minute field into milliseconds
-                        totalTime += Integer.parseInt(mEdit.getText().toString()) * 60000;
-                        //convert the second field into milliseconds
-                        totalTime += Integer.parseInt(sEdit.getText().toString()) * 1000;
+                        if (!TextUtils.isEmpty(mEdit.getText())) {
+                            totalTime += Integer.parseInt(mEdit.getText().toString()) * 60000;
+                        } else {
+                            totalTime += 0;
+                        }
+//convert the second field into milliseconds
+                        if (!TextUtils.isEmpty(sEdit.getText())) {
+                            totalTime += Integer.parseInt(sEdit.getText().toString()) * 1000;
+                        } else {
+                            totalTime += 0;
+                        }
+
                         System.out.println("totalTime: " + totalTime);
 
                         cEdit = (TextView) findViewById(R.id.countdownView);
