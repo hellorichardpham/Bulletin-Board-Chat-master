@@ -20,7 +20,8 @@
         android:id="@+id/minuteView"
         android:layout_marginTop="58dp"
         android:layout_below="@+id/countdownView"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:inputType="number"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -29,7 +30,8 @@
         android:layout_gravity="center"
         android:layout_alignTop="@+id/textView2"
         android:layout_toRightOf="@+id/textView2"
-        android:layout_toEndOf="@+id/textView2" />
+        android:layout_toEndOf="@+id/textView2"
+        android:inputType="number"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -76,7 +78,8 @@
         android:focusableInTouchMode="true"
         android:layout_above="@+id/message"
         android:layout_toRightOf="@+id/message"
-        android:layout_toEndOf="@+id/message" />
+        android:layout_toEndOf="@+id/message"
+        android:inputType="number"/>
 
     <EditText
         android:layout_width="wrap_content"

@@ -1,5 +1,7 @@
 package com.pham.richard.bulletinboard;
 
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
@@ -61,7 +63,9 @@ public class MainActivity extends ActionBarActivity {
     boolean countdownHasStarted = false;
     double longitude;
     double latitude;
-    boolean iClicked = false;
+    private SensorManager mSensorManager;
+    private ShakeEventListener mSensorListener;
+
 
     /*** Called when the activity is first created.*/
     @Override
@@ -74,6 +78,19 @@ public class MainActivity extends ActionBarActivity {
         sEdit = (EditText) findViewById(R.id.secondView);
         txtphoneNo = (EditText) findViewById(R.id.phoneNumberInput);
         txtMessage = (EditText) findViewById(R.id.messageInput);
+
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mSensorListener = new ShakeEventListener();
+
+        mSensorListener.setOnShakeListener(new ShakeEventListener.OnShakeListener() {
+
+            public void onShake() {
+                if (countdownHasStarted == true) {
+                    Toast.makeText(MainActivity.this, "Shake!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
 
         final LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
@@ -190,13 +207,16 @@ public class MainActivity extends ActionBarActivity {
         // First super, then do stuff.
         // Let us display the previous posts, if any.
         //SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
+        mSensorManager.registerListener(mSensorListener,
+                mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_UI);
 
     }
 
 
     @Override
     protected void onPause() {
-
+        mSensorManager.unregisterListener(mSensorListener);
         super.onPause();
     }
 
