@@ -31,6 +31,7 @@ import android.os.Message;
 //
 
 public class MainActivity extends ActionBarActivity {
+    boolean noResponse = true;
 
     Button mButton;
     EditText mEdit;
@@ -60,6 +61,8 @@ public class MainActivity extends ActionBarActivity {
     Button sButton;
     int remainingTime;
 
+
+
     /*** Called when the activity is first created.*/
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,7 +76,7 @@ public class MainActivity extends ActionBarActivity {
         sEdit = (EditText) findViewById(R.id.secondView);
         txtphoneNo = (EditText) findViewById(R.id.phoneNumberInput);
         txtMessage = (EditText) findViewById(R.id.messageInput);
-        sound = MediaPlayer.create(this, R.raw.alarm);
+        //sound = MediaPlayer.create(this, R.raw.alarm);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensorListener = new ShakeEventListener();
@@ -200,7 +203,6 @@ public class MainActivity extends ActionBarActivity {
                                         System.out.println("I hit the dismiss case");
                                         dialog.dismiss();
                                         //Play Music
-                                        sound.start();
                                         generateSecondDialog();
                                         //dialog.dismiss();
                                     }
@@ -219,6 +221,7 @@ public class MainActivity extends ActionBarActivity {
                     };
 
                     private void generateDialog() {
+                        noResponse = true;
                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                         builder.setMessage("The time allotted has run out and you haven't confirmed if you've reached your destination. Are you home yet?")
                                 .setCancelable(false).setPositiveButton("I'm home", new DialogInterface.OnClickListener() {
@@ -229,25 +232,30 @@ public class MainActivity extends ActionBarActivity {
                             }
                         }).setNegativeButton("I need more time", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-
+                                noResponse = false;
                             }
                         });
                         dialog = builder.create();
                         dialog.show();
-                        mHandler.sendEmptyMessageDelayed(DISMISS, TIMEOUT);
+                        if(noResponse) {
+                            mHandler.sendEmptyMessageDelayed(DISMISS, TIMEOUT);
+                        }
                     }
 
                     private void generateSecondDialog() {
+                        sound = MediaPlayer.create(MainActivity.this, R.raw.alarm);
+                        sound.start();
                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                         builder.setMessage("Please respond in the next 5 seconds or your text message and last location will be sent to your emergency contact.")
                                 .setCancelable(false).setPositiveButton("I'm home", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+                                sound.stop();
                                 finish();
                                 //I want to return to a default state. Yes I made it home.
                             }
                         }).setNegativeButton("I need more time", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog2, int id) {
-
+                                sound.stop();
                             }
                         });
                         dialog2 = builder.create();
@@ -306,6 +314,7 @@ public class MainActivity extends ActionBarActivity {
 
                                     Toast.makeText(MainActivity.this, "Shake!", Toast.LENGTH_SHORT).show();
                                     call();
+
 
                                 }
                             }
