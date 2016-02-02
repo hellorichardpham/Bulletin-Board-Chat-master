@@ -76,7 +76,7 @@ public class MainActivity extends ActionBarActivity {
         sEdit = (EditText) findViewById(R.id.secondView);
         txtphoneNo = (EditText) findViewById(R.id.phoneNumberInput);
         txtMessage = (EditText) findViewById(R.id.messageInput);
-        //sound = MediaPlayer.create(this, R.raw.alarm);
+         //sound = MediaPlayer.create(this, R.raw.alarm);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensorListener = new ShakeEventListener();
